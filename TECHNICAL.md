@@ -8,11 +8,13 @@
 4. [Java API Documentation](#java-api-documentation)
 5. [CLI Interface Documentation](#cli-interface-documentation)
 6. [Data Models](#data-models)
-7. [Usage Examples](#usage-examples)
-8. [Component Details](#component-details)
-9. [Build & Development](#build--development)
-10. [Dependencies](#dependencies)
-11. [File Structure Reference](#file-structure-reference)
+7. [Project Management](#project-management)
+8. [Translation Memory Management](#translation-memory-management)
+9. [Usage Examples](#usage-examples)
+10. [Component Details](#component-details)
+11. [Build & Development](#build--development)
+12. [Dependencies](#dependencies)
+13. [File Structure Reference](#file-structure-reference)
 
 ---
 
@@ -165,6 +167,8 @@ Fluenta uses a **hybrid architecture** combining a Java backend for heavy proces
 **File**: `src/com/maxprograms/fluenta/API.java`
 
 The API class provides static methods for programmatic access to Fluenta's core functionality.
+
+**Note**: The current API focuses on XLIFF operations and translation memory management. Project CRUD operations (create, update, delete) are not exposed via the API class but can be performed through direct JSON manipulation or the GUI.
 
 #### Import Translation Memory
 
@@ -472,6 +476,449 @@ public class ProjectEvent {
     private int build;         // Build number
 }
 ```
+
+---
+
+## Project Management
+
+### Overview
+
+Projects in Fluenta are primarily managed through the GUI. There are **no dedicated CLI commands or public API methods** for creating, updating, or deleting projects. However, projects can be managed programmatically through:
+
+1. **GUI Interface** (recommended)
+2. **Direct JSON file manipulation**
+3. **Java `ProjectsManager` class** (for custom Java applications)
+
+### Project File Location
+
+Projects are stored in JSON format at:
+- **Windows**: `%APPDATA%\Fluenta\projects\projects.json`
+- **Linux/macOS**: `~/.config/Fluenta/projects/projects.json`
+
+### Creating Projects via GUI
+
+The recommended method for creating projects:
+
+1. Launch Fluenta application
+2. Click "Add Project" button
+3. Fill in project details (title, description, DITA map path, languages)
+4. Assign translation memories (optional)
+5. Click "Save"
+
+The GUI automatically:
+- Generates a unique project ID (timestamp)
+- Creates an associated translation memory with the same ID
+- Initializes language status tracking
+- Saves to `projects.json`
+
+### Managing Projects via JSON Manipulation
+
+For automation or scripting, you can directly edit the `projects.json` file.
+
+#### Creating a Project Manually
+
+Add a new project object to the `projects` array:
+
+```json
+{
+  "version": 1,
+  "projects": [
+    {
+      "id": 1705405200000,
+      "title": "My Translation Project",
+      "description": "Technical documentation translation",
+      "map": "/absolute/path/to/document.ditamap",
+      "creationDate": "2025-01-16 10:00",
+      "lastUpdate": "2025-01-16 10:00",
+      "status": "0",
+      "srcLanguage": "en-US",
+      "tgtLanguages": ["de-DE", "fr-FR"],
+      "memories": [1705405200000],
+      "history": [],
+      "languageStatus": {
+        "de-DE": "3",
+        "fr-FR": "3"
+      }
+    }
+  ]
+}
+```
+
+**Critical Requirements**:
+- `id`: Unique timestamp in milliseconds (e.g., `new Date().getTime()`)
+- `map`: **Must be an absolute path** to the DITA map file
+- `status`: "0" (NEW), "1" (IN_PROGRESS), or "2" (COMPLETED)
+- `languageStatus`: "3" (UNTRANSLATED) or "4" (TRANSLATED)
+- `memories`: Array of memory IDs - typically includes the project's own memory
+- Date format: `"yyyy-MM-dd HH:mm"`
+
+**Also create a corresponding memory** in `memories.json`:
+
+```json
+{
+  "version": 1,
+  "memories": [
+    {
+      "id": 1705405200000,
+      "name": "My Translation Project",
+      "description": "Technical documentation translation",
+      "creationDate": "2025-01-16 10:00",
+      "lastUpdate": "2025-01-16 10:00",
+      "srcLanguage": "en-US"
+    }
+  ]
+}
+```
+
+#### Listing All Projects
+
+**Linux/macOS**:
+```bash
+cat ~/.config/Fluenta/projects/projects.json | jq '.projects[] | {id, title, status, srcLanguage, tgtLanguages}'
+```
+
+**Windows PowerShell**:
+```powershell
+$json = Get-Content "$env:APPDATA\Fluenta\projects\projects.json" | ConvertFrom-Json
+$json.projects | Select-Object id, title, status, srcLanguage, tgtLanguages
+```
+
+#### Getting Project ID
+
+To find a project ID for CLI operations:
+
+**Linux/macOS**:
+```bash
+cat ~/.config/Fluenta/projects/projects.json | jq '.projects[] | select(.title=="My Project") | .id'
+```
+
+**Windows PowerShell**:
+```powershell
+$json = Get-Content "$env:APPDATA\Fluenta\projects\projects.json" | ConvertFrom-Json
+$json.projects | Where-Object {$_.title -eq "My Project"} | Select-Object -ExpandProperty id
+```
+
+#### Updating a Project
+
+1. Locate the project by `id` in the `projects` array
+2. Modify the desired fields
+3. Update the `lastUpdate` field to current timestamp
+4. Save the file
+
+#### Deleting a Project
+
+1. Remove the project object from the `projects` array
+2. Optionally remove the associated memory from `memories.json`
+3. Optionally clean up skeleton files in `%APPDATA%\Fluenta\projects\<project-id>\`
+
+### Managing Projects via Java (Programmatic)
+
+For custom Java applications, use the `ProjectsManager` class:
+
+```java
+import com.maxprograms.fluenta.controllers.ProjectsManager;
+import com.maxprograms.fluenta.models.Project;
+import com.maxprograms.fluenta.models.ProjectEvent;
+import com.maxprograms.utils.Preferences;
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
+import java.util.Map;
+import java.util.Hashtable;
+
+public class ProjectManagementExample {
+    public static void main(String[] args) {
+        try {
+            // Initialize ProjectsManager
+            Preferences prefs = Preferences.getInstance();
+            File projectsFolder = prefs.getProjectsFolder();
+            ProjectsManager manager = new ProjectsManager(projectsFolder);
+
+            // Create a new project
+            long projectId = System.currentTimeMillis();
+
+            List<String> targetLangs = new Vector<>();
+            targetLangs.add("de-DE");
+            targetLangs.add("fr-FR");
+
+            List<Long> memories = new Vector<>();
+            memories.add(1705400000000L); // Existing memory ID
+
+            List<ProjectEvent> history = new Vector<>();
+
+            Map<String, String> langStatus = new Hashtable<>();
+            langStatus.put("de-DE", "3"); // Untranslated
+            langStatus.put("fr-FR", "3"); // Untranslated
+
+            Project newProject = new Project(
+                projectId,
+                "API Test Project",
+                "Created via Java API",
+                "/path/to/documentation.ditamap",
+                new Date(),                  // creationDate
+                new Date(),                  // lastUpdate
+                "en-US",                     // srcLanguage
+                targetLangs,                 // tgtLanguages
+                memories,                    // memories
+                history,                     // history
+                langStatus                   // languageStatus
+            );
+
+            // Add project to manager
+            manager.add(newProject);
+            System.out.println("Project created with ID: " + projectId);
+
+            // Retrieve project by ID
+            Project retrieved = manager.getProject(projectId);
+            System.out.println("Project title: " + retrieved.getTitle());
+            System.out.println("Source language: " + retrieved.getSrcLanguage());
+            System.out.println("Target languages: " + retrieved.getLanguages());
+
+            // Update project (modify fields as needed)
+            retrieved.setLastUpdate(new Date());
+            manager.update(retrieved);
+            System.out.println("Project updated");
+
+            // Remove project
+            manager.remove(projectId);
+            System.out.println("Project deleted");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+**Key Classes**:
+- **`ProjectsManager`** (`src/com/maxprograms/fluenta/controllers/ProjectsManager.java`)
+  - `add(Project project)` - Add new project and save to JSON
+  - `getProject(long id)` - Retrieve project by ID
+  - `update(Project project)` - Update existing project
+  - `remove(long id)` - Delete project by ID
+  - `getProjects()` - Get all projects (package-private)
+
+- **`LocalController`** (`src/com/maxprograms/fluenta/controllers/LocalController.java`)
+  - `getProject(long id)` - Retrieve project via LocalController
+  - `updateProject(Project project)` - Update project with timestamp
+
+### Working with Projects in CLI Workflows
+
+While there are no CLI commands to create projects, you can reference existing projects in CLI operations by their ID:
+
+**Step 1**: Find your project ID (see "Listing All Projects" above)
+
+**Step 2**: Use the ID in XLIFF generation/import operations
+
+```bash
+# Generate XLIFF for project ID 1705405200000
+java -cp "jars/*" com.maxprograms.fluenta.CLI -generateXLIFF config.json
+
+# Where config.json contains:
+# {
+#   "id": 1705405200000,
+#   "xliffFolder": "/path/to/output",
+#   ...
+# }
+```
+
+---
+
+## Translation Memory Management
+
+### Overview
+
+Translation memories can be managed through:
+1. **GUI Interface** (recommended for creation)
+2. **CLI Commands** (for TMX import/export)
+3. **Java API** (for TMX import/export)
+4. **Direct JSON manipulation** (for create/update/delete)
+5. **Java `MemoriesManager` class** (for custom Java applications)
+
+### Memory File Location
+
+Memories metadata is stored at:
+- **Windows**: `%APPDATA%\Fluenta\memories\memories.json`
+- **Linux/macOS**: `~/.config/Fluenta/memories/memories.json`
+
+Translation units are stored in SQLite databases at:
+- **Windows**: `%APPDATA%\Fluenta\memories\<memory-id>.db`
+- **Linux/macOS**: `~/.config/Fluenta/memories/<memory-id>.db`
+
+### Creating Memories via GUI
+
+1. Launch Fluenta application
+2. Switch to "Memories" view
+3. Click "Add Memory" button
+4. Fill in memory details (name, description, source language)
+5. Click "Save"
+
+### Managing Memories via JSON
+
+#### Creating a Memory Manually
+
+Add a new memory object to `memories.json`:
+
+```json
+{
+  "version": 1,
+  "memories": [
+    {
+      "id": 1705400000000,
+      "name": "Technical Terms",
+      "description": "General technical terminology",
+      "creationDate": "2025-01-16 09:00",
+      "lastUpdate": "2025-01-16 09:00",
+      "srcLanguage": "en-US"
+    }
+  ]
+}
+```
+
+**Requirements**:
+- `id`: Unique timestamp in milliseconds
+- `srcLanguage`: BCP-47 language code (e.g., "en-US", "de-DE")
+- Date format: `"yyyy-MM-dd HH:mm"`
+
+**Note**: Creating the JSON entry doesn't populate the memory with translations. Use TMX import to add translation units.
+
+#### Listing All Memories
+
+**Linux/macOS**:
+```bash
+cat ~/.config/Fluenta/memories/memories.json | jq '.memories[] | {id, name, srcLanguage}'
+```
+
+**Windows PowerShell**:
+```powershell
+$json = Get-Content "$env:APPDATA\Fluenta\memories\memories.json" | ConvertFrom-Json
+$json.memories | Select-Object id, name, srcLanguage
+```
+
+#### Getting Memory ID
+
+**Linux/macOS**:
+```bash
+cat ~/.config/Fluenta/memories/memories.json | jq '.memories[] | select(.name=="Technical Terms") | .id'
+```
+
+**Windows PowerShell**:
+```powershell
+$json = Get-Content "$env:APPDATA\Fluenta\memories\memories.json" | ConvertFrom-Json
+$json.memories | Where-Object {$_.name -eq "Technical Terms"} | Select-Object -ExpandProperty id
+```
+
+### Populating Memories via CLI (TMX Import)
+
+Once a memory exists, populate it with translation units:
+
+```bash
+# Import TMX file into memory
+java -cp "jars/*" com.maxprograms.fluenta.CLI -importTmx 1705400000000 -tmx terminology.tmx -verbose
+```
+
+**Output**: Returns the number of translation units imported
+
+### Exporting Memories via CLI (TMX Export)
+
+```bash
+# Export memory to TMX file
+java -cp "jars/*" com.maxprograms.fluenta.CLI -exportTmx 1705400000000 -tmx backup.tmx
+```
+
+### Managing Memories via Java (Programmatic)
+
+```java
+import com.maxprograms.fluenta.controllers.MemoriesManager;
+import com.maxprograms.fluenta.models.Memory;
+import com.maxprograms.fluenta.API;
+import com.maxprograms.languages.Language;
+import com.maxprograms.languages.LanguageUtils;
+import com.maxprograms.utils.Preferences;
+import java.io.File;
+import java.util.Date;
+
+public class MemoryManagementExample {
+    public static void main(String[] args) {
+        try {
+            // Initialize MemoriesManager
+            Preferences prefs = Preferences.getInstance();
+            File memoriesFolder = prefs.getMemoriesFolder();
+            MemoriesManager manager = new MemoriesManager(memoriesFolder);
+
+            // Create a new memory
+            long memoryId = System.currentTimeMillis();
+            Language srcLang = LanguageUtils.getLanguage("en-US");
+
+            Memory newMemory = new Memory(
+                memoryId,
+                "Product Terms",
+                "Product-specific terminology",
+                new Date(),     // creationDate
+                new Date(),     // lastUpdate
+                srcLang
+            );
+
+            // Add memory to manager
+            manager.add(newMemory);
+            System.out.println("Memory created with ID: " + memoryId);
+
+            // Populate memory with TMX import
+            int imported = API.importMemory(memoryId, "product-terms.tmx");
+            System.out.println("Imported " + imported + " translation units");
+
+            // Retrieve memory by ID
+            Memory retrieved = manager.getMemory(memoryId);
+            System.out.println("Memory name: " + retrieved.getName());
+            System.out.println("Source language: " + retrieved.getSrcLanguage().getCode());
+
+            // Export memory to TMX
+            API.exportMemory(memoryId, "backup.tmx");
+            System.out.println("Memory exported to backup.tmx");
+
+            // Update memory metadata
+            retrieved.setName("Updated Product Terms");
+            retrieved.setLastUpdate(new Date());
+            manager.update(retrieved);
+
+            // Remove memory
+            manager.remove(memoryId);
+            System.out.println("Memory deleted");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+**Key Classes**:
+- **`MemoriesManager`** (`src/com/maxprograms/fluenta/controllers/MemoriesManager.java`)
+  - `add(Memory memory)` - Add new memory (metadata only)
+  - `getMemory(long id)` - Retrieve memory by ID
+  - `update(Memory memory)` - Update memory metadata
+  - `remove(long id)` - Delete memory and database
+  - `getMemories()` - Get all memories (package-private)
+
+- **`API`** (`src/com/maxprograms/fluenta/API.java`)
+  - `importMemory(long id, String tmxFile)` - Import TMX into memory
+  - `exportMemory(long id, String tmxFile)` - Export memory to TMX
+
+### Assigning Memories to Projects
+
+Memories are referenced in projects via the `memories` array field. When creating or updating a project, include the memory IDs:
+
+```json
+{
+  "id": 1705405200000,
+  "title": "My Project",
+  "memories": [1705400000000, 1705400001000],
+  ...
+}
+```
+
+Multiple memories can be assigned to a single project. During XLIFF generation, Fluenta will search all assigned memories for translation matches.
 
 ---
 
