@@ -15,15 +15,5 @@ package-lock.json
 docs/en/out
 docs/es/out
 out-test/TEST-com.maxprograms.utils.TextUtilsTest.xml
-target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst
-target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst
-target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst
-target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
-target/surefire-reports/com.maxprograms.utils.TextUtilsTest.txt
-target/surefire-reports/TEST-com.maxprograms.utils.TextUtilsTest.xml
-testclasses/com/maxprograms/utils/TextUtilsTest.class
-testclasses/META-INF/jpms.args
-target/surefire-reports/com.maxprograms.utils.TestUtilsTest.txt
-target/surefire-reports/TEST-com.maxprograms.utils.TestUtilsTest.xml
-testclasses/com/maxprograms/utils/TestUtils.class
-testclasses/com/maxprograms/utils/TestUtilsTest.class
+target*
+testclasses/*
