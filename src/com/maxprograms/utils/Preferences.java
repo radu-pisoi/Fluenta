@@ -38,6 +38,29 @@ public class Preferences {
 		return instance;
 	}
 
+	/**
+	 * Initializes Preferences for tests with the given folders. Resets the
+	 * singleton so the next getInstance() returns a Preferences using these paths.
+	 *
+	 * @param fluentaHome  fluenta home folder (work directory)
+	 * @param projectsFolder  projects folder
+	 * @param memoriesFolder  memories folder
+	 */
+	public static void initForTest(File fluentaHome, File projectsFolder, File memoriesFolder) throws IOException {
+		resetInstance();
+		instance = getInstance();
+    instance.setProjectsFolder(projectsFolder);
+    instance.setMemoriesFolder(memoriesFolder);
+	}
+
+	/**
+	 * Resets the singleton. For use in tests only.
+	 */
+	static void resetInstance() {
+		instance = null;
+		workDir = null;
+	}
+
 	private Preferences() throws IOException {
 		workDir = getPreferencesFolder();
 		preferencesFile = new File(workDir, "preferences.json");
@@ -145,6 +168,14 @@ public class Preferences {
 		}
 	}
 
+	public File setProjectsFolder(File folder) throws IOException {
+		save("workDir", "projects", folder.getAbsolutePath());
+		if (!folder.exists()) {
+			Files.createDirectories(folder.toPath());
+		}
+		return folder;
+	}
+
 	public File getProjectsFolder() throws IOException {
 		File folder = new File(get("workDir", "projects",
 				new File(getPreferencesFolder(), "projects").getAbsolutePath()));
@@ -162,6 +193,14 @@ public class Preferences {
 		}
 		return folder;
 	}
+
+  public File setMemoriesFolder(File folder) throws IOException {
+    save("workDir", "memories", folder.getAbsolutePath());
+    if (!folder.exists()) {
+      Files.createDirectories(folder.toPath());
+    }
+    return folder;
+  }
 
 	public String getDefaultSRX() throws IOException {
 		File srxFolder = new File(getPreferencesFolder(), "srx");

@@ -23,3 +23,7 @@ target/surefire-reports/com.maxprograms.utils.TextUtilsTest.txt
 target/surefire-reports/TEST-com.maxprograms.utils.TextUtilsTest.xml
 testclasses/com/maxprograms/utils/TextUtilsTest.class
 testclasses/META-INF/jpms.args
+target/surefire-reports/com.maxprograms.utils.TestUtilsTest.txt
+target/surefire-reports/TEST-com.maxprograms.utils.TestUtilsTest.xml
+testclasses/com/maxprograms/utils/TestUtils.class
+testclasses/com/maxprograms/utils/TestUtilsTest.class

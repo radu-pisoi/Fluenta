@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic PUBLIC "-//OASIS//DTD DITA Topic//EN" "topic.dtd">
+<topic id="topic1">
+  <title>First Topic</title>
+  <body>
+    <p>This is a short DITA topic that references an image.</p>
+    <image href="images/sample.png">
+      <alt>Sample image</alt>
+    </image>
+  </body>
+</topic>
