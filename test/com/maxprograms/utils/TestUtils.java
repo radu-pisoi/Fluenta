@@ -79,13 +79,12 @@ public final class TestUtils {
 	 * @throws ParseException     if project date parsing fails
 	 * @throws ReflectiveOperationException if reflection on LocalController fails
 	 */
-	public static Project getOrCreateProjectForDitaMap(File ditaMapFile)
+	public static Project getOrCreateProjectForDitaMap(File ditaMapFile, LocalController controller)
 			throws IOException, JSONException, ParseException, ReflectiveOperationException {
 		if (ditaMapFile == null || !ditaMapFile.exists()) {
 			throw new IOException("DITA Map file does not exist: " + (ditaMapFile == null ? "null" : ditaMapFile.getAbsolutePath()));
 		}
 		String mapPath = ditaMapFile.getAbsolutePath();
-		LocalController controller = new LocalController();
 		ProjectsManager projectsManager = getProjectsManager(controller);
 		List<Project> projects = invokeGetProjects(projectsManager);
 		String normalizedMapPath = normalizePath(mapPath);

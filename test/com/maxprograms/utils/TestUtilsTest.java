@@ -25,6 +25,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.maxprograms.fluenta.controllers.LocalController;
 import com.maxprograms.fluenta.models.Project;
 
 public class TestUtilsTest {
@@ -113,13 +114,13 @@ public class TestUtilsTest {
 		}
 		assertTrue("Sample DITA map must exist for test", ditaMap.exists());
 
-		Project project = TestUtils.getOrCreateProjectForDitaMap(ditaMap);
+		Project project = TestUtils.getOrCreateProjectForDitaMap(ditaMap, new LocalController());
 
 		assertNotNull(project);
 		assertTrue("Project id should be positive", project.getId() > 0);
 		assertEquals(ditaMap.getAbsolutePath(), project.getMap());
 		assertNotNull(project.getTitle());
-		assertTrue(project.getTitle().contains("sample") || project.getTitle().equals("sample"));
+		assertTrue(project.getTitle().contains("sample") || "sample".equals(project.getTitle()));
 	}
 
 	@Test
@@ -135,8 +136,9 @@ public class TestUtilsTest {
 		}
 		assertTrue("Sample DITA map must exist for test", ditaMap.exists());
 
-		Project project1 = TestUtils.getOrCreateProjectForDitaMap(ditaMap);
-		Project project2 = TestUtils.getOrCreateProjectForDitaMap(ditaMap);
+    LocalController controller = new LocalController();
+		Project project1 = TestUtils.getOrCreateProjectForDitaMap(ditaMap, controller);
+		Project project2 = TestUtils.getOrCreateProjectForDitaMap(ditaMap, controller);
 
 		assertNotNull(project1);
 		assertNotNull(project2);
