@@ -25,6 +25,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.maxprograms.fluenta.models.Project;
+
 public class TestUtilsTest {
 
 	@Before
@@ -96,6 +98,50 @@ public class TestUtilsTest {
 
 		assertEquals(projects2.getAbsolutePath(), Preferences.getInstance().getProjectsFolder().getAbsolutePath());
 		assertEquals(memories2.getAbsolutePath(), Preferences.getInstance().getMemoriesFolder().getAbsolutePath());
+	}
+
+	@Test
+	public void testGetOrCreateProjectForDitaMap_createsProjectWhenNotExist() throws Exception {
+		Path base = Files.createTempDirectory("fluenta-test-dita-");
+		File projectsFolder = base.resolve("projects").toFile();
+		File memoriesFolder = base.resolve("memories").toFile();
+		TestUtils.initPreferences(projectsFolder, memoriesFolder);
+
+		File ditaMap = new File("test-files/dita-sample-project/dita/sample.ditamap");
+		if (!ditaMap.exists()) {
+			ditaMap = new File("dita-sample-project/dita/sample.ditamap");
+		}
+		assertTrue("Sample DITA map must exist for test", ditaMap.exists());
+
+		Project project = TestUtils.getOrCreateProjectForDitaMap(ditaMap);
+
+		assertNotNull(project);
+		assertTrue("Project id should be positive", project.getId() > 0);
+		assertEquals(ditaMap.getAbsolutePath(), project.getMap());
+		assertNotNull(project.getTitle());
+		assertTrue(project.getTitle().contains("sample") || project.getTitle().equals("sample"));
+	}
+
+	@Test
+	public void testGetOrCreateProjectForDitaMap_returnsSameProjectWhenCalledAgain() throws Exception {
+		Path base = Files.createTempDirectory("fluenta-test-dita-same-");
+		File projectsFolder = base.resolve("projects").toFile();
+		File memoriesFolder = base.resolve("memories").toFile();
+		TestUtils.initPreferences(projectsFolder, memoriesFolder);
+
+		File ditaMap = new File("test-files/dita-sample-project/dita/sample.ditamap");
+		if (!ditaMap.exists()) {
+			ditaMap = new File("dita-sample-project/dita/sample.ditamap");
+		}
+		assertTrue("Sample DITA map must exist for test", ditaMap.exists());
+
+		Project project1 = TestUtils.getOrCreateProjectForDitaMap(ditaMap);
+		Project project2 = TestUtils.getOrCreateProjectForDitaMap(ditaMap);
+
+		assertNotNull(project1);
+		assertNotNull(project2);
+		assertEquals(project1.getId(), project2.getId());
+		assertEquals(project1.getMap(), project2.getMap());
 	}
 
 }
