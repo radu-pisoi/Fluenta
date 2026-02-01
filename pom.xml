@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.maxprograms</groupId>
+    <artifactId>fluenta</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>Fluenta</name>
+    <description>Fluenta - Translation project manager</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+    </properties>
+
+    <build>
+        <sourceDirectory>src</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
+        <outputDirectory>out</outputDirectory>
+        <testOutputDirectory>testclasses</testOutputDirectory>
+    </build>
+
+    <dependencies>
+        <!-- Main project jars (system scope - use existing jars/) -->
+        <dependency>
+            <groupId>com.maxprograms.bcp47j</groupId>
+            <artifactId>bcp47j</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/jars/bcp47j.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.maxprograms.json</groupId>
+            <artifactId>json</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/jars/json.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/jars/jsoup.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/jars/mapdb.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.maxprograms.openxliff</groupId>
+            <artifactId>openxliff</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/jars/openxliff.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.49.1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/jars/sqlite-jdbc-3.49.1.0.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.maxprograms.swordfish</groupId>
+            <artifactId>swordfish</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/jars/swordfish.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.maxprograms.xmljava</groupId>
+            <artifactId>xmljava</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/jars/xmljava.jar</systemPath>
+        </dependency>
+        <!-- JUnit 4 for tests - from Maven Central so IDE resolves @Test -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>2.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>

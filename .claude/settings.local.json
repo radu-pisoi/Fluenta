@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(powershell -Command \"\n# Download JUnit4\n$junit_url = ''https://search.maven.org/remotecontent?filepath=junit/junit/4.13.2/junit-4.13.2.jar''\n$hamcrest_url = ''https://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar''\n\n# Use Windows native download \\(curl is available in newer Windows\\)\ncurl -o junit-4.13.2.jar $junit_url\ncurl -o hamcrest-2.2.jar $hamcrest_url\n\n# Verify downloads\nls -la junit-4.13.2.jar hamcrest-2.2.jar\n\")",
+      "Bash(curl:*)",
+      "Bash(ant compile-tests:*)",
+      "Bash(ant run-tests:*)"
     ]
   }
 }

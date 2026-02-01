@@ -13,6 +13,13 @@
         <pathelement location="jars/swordfish.jar" />
         <pathelement location="jars/xmljava.jar" />
     </path>
+    <path id="test.classpath">
+        <path refid="Fluenta.classpath" />
+        <pathelement location="jars/junit-4.13.2.jar" />
+        <pathelement location="jars/hamcrest-2.2.jar" />
+        <pathelement location="out" />
+        <pathelement location="testclasses" />
+    </path>
     <condition property="isWindows">
         <os family="windows" />
     </condition>
@@ -32,6 +39,8 @@
         <delete dir="include" />
         <delete dir="legal" />
         <delete dir="lib" />
+        <delete dir="testclasses" />
+        <delete dir="out-test" />
     </target>
     <target name="compile" depends="clean,init">
         <description>Build jar file</description>
@@ -93,5 +102,24 @@
     </target>
     <target name="dist" depends="link,copyWindows,copyUnix">
         <description>Prepare distribution</description>
+    </target>
+    <target name="compile-tests" depends="compile">
+        <description>Compile JUnit4 test classes</description>
+        <mkdir dir="testclasses" />
+        <javac srcdir="test" destdir="testclasses" classpathref="test.classpath" includeAntRuntime="false" />
+    </target>
+    <target name="run-tests" depends="compile-tests">
+        <description>Run JUnit4 tests</description>
+        <mkdir dir="out-test" />
+        <junit printsummary="on" fork="true" haltonfailure="false">
+            <classpath refid="test.classpath" />
+            <formatter type="plain" usefile="false" />
+            <formatter type="xml" />
+            <batchtest todir="out-test">
+                <fileset dir="test">
+                    <include name="**/*Test.java" />
+                </fileset>
+            </batchtest>
+        </junit>
     </target>
 </project>
