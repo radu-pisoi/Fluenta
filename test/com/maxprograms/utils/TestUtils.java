@@ -15,7 +15,6 @@ package com.maxprograms.utils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 
 /**
  * Utility methods for use in JUnit test cases. Provides temporary file/directory
@@ -38,11 +37,10 @@ public final class TestUtils {
 	 * @return the initialized Preferences instance
 	 * @throws IOException if directories cannot be created or Preferences cannot be initialized
 	 */
-	public static Preferences initPreferences(File fluentaHome, File projectsFolder, File memoriesFolder)
+	public static Preferences initPreferences(File projectsFolder, File memoriesFolder)
 			throws IOException {
-		if (!fluentaHome.exists()) {
-			Files.createDirectories(fluentaHome.toPath());
-		}
+		File fluentaHome = new File(".");
+
 		if (!projectsFolder.exists()) {
 			Files.createDirectories(projectsFolder.toPath());
 		}
@@ -52,27 +50,6 @@ public final class TestUtils {
 		Preferences.initForTest(fluentaHome, projectsFolder, memoriesFolder);
 		Preferences prefs = Preferences.getInstance();
 		return prefs;
-	}
-
-	/**
-	 * Initializes Preferences for tests using a temporary fluenta home directory,
-	 * with "projects" and "memories" subdirectories created inside it. Useful for
-	 * tests that need an isolated Preferences instance without touching the real
-	 * user configuration.
-	 * <p>
-	 * The fluenta home directory can be obtained later via
-	 * {@link Preferences#getPreferencesFolder()} for cleanup (e.g. in
-	 * {@code @After}).
-	 *
-	 * @return the initialized Preferences instance
-	 * @throws IOException if temporary directories cannot be created or Preferences cannot be initialized
-	 */
-	public static Preferences initPreferencesWithTempDirs() throws IOException {
-		Path tempDir = Files.createTempDirectory("fluenta-test-");
-		File fluentaHome = tempDir.toFile();
-		File projectsFolder = new File(fluentaHome, "projects");
-		File memoriesFolder = new File(fluentaHome, "memories");
-		return initPreferences(fluentaHome, projectsFolder, memoriesFolder);
 	}
 
 }

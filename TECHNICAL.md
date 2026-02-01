@@ -10,11 +10,12 @@
 6. [Data Models](#data-models)
 7. [Project Management](#project-management)
 8. [Translation Memory Management](#translation-memory-management)
-9. [Usage Examples](#usage-examples)
-10. [Component Details](#component-details)
-11. [Build & Development](#build--development)
-12. [Dependencies](#dependencies)
-13. [File Structure Reference](#file-structure-reference)
+9. [XML Catalog Setup](#xml-catalog-setup)
+10. [Usage Examples](#usage-examples)
+11. [Component Details](#component-details)
+12. [Build & Development](#build--development)
+13. [Dependencies](#dependencies)
+14. [File Structure Reference](#file-structure-reference)
 
 ---
 
@@ -922,6 +923,72 @@ Multiple memories can be assigned to a single project. During XLIFF generation, 
 
 ---
 
+## XML Catalog Setup
+
+### Overview
+
+Fluenta uses **OASIS XML Catalogs** for entity and URI resolution when parsing DITA maps and XML content (e.g. DTDs, XSDs, entities). The catalog ensures that public IDs and system IDs in your DITA and other XML files resolve to local schema files instead of remote URLs, enabling offline processing and consistent validation.
+
+### Catalog Locations
+
+| Location | Purpose |
+|----------|---------|
+| **Application catalog** | `catalog/` in the Fluenta installation directory. Contains the built-in master catalog (`catalog.xml`) and subcatalogs for DITA, XLIFF, DocBook, TMX, SRX, and other formats. |
+| **User catalog** | User-specific catalog used at runtime. Path: `%APPDATA%\Fluenta\catalog\catalog.xml` (Windows) or `~/.config/Fluenta/catalog/catalog.xml` (Linux/macOS). |
+
+### Initial Setup (First Run)
+
+1. **GUI (Electron)**: On first launch, Fluenta copies the entire `catalog/` folder from the application directory to the user data folder. The user catalog is then a full copy of the application catalog.
+2. **Java/CLI only**: If the user catalog file does not exist, `LocalController` creates it automatically. The created file is a minimal OASIS catalog containing a single `<nextCatalog>` entry that points to the application’s `catalog.xml` (resolved from `user.dir`). No copy of the full catalog folder is made; the Java process must be run with a working directory that contains the Fluenta `catalog/` folder.
+
+### Adding Custom Catalogs (GUI)
+
+To add project-specific or custom XML catalogs (e.g. organizational DITA extensions or proprietary schemas):
+
+1. Open **Settings** (gear icon or menu).
+2. Switch to the **XML Options** tab.
+3. In the **XML Catalog** section, click **Add Catalog Entry**.
+4. In the file dialog, select a `catalog.xml` file (or another OASIS catalog file). Use an absolute path so the entry remains valid.
+5. The selected catalog is added as a `<nextCatalog>` in the user `catalog.xml`. Resolution will consult this catalog when the main catalog does not resolve an entity or URI.
+6. Click **Save Settings** to persist.
+
+To remove an entry: select the checkbox next to the catalog path in the list, then click **Remove Catalog Entry**.
+
+### How the User Catalog Is Used
+
+- The path to the **user** catalog is obtained via `Preferences.getCatalogFile()` and passed to the backend (e.g. OpenXLIFF/Swordfish) as the `catalog` parameter for XLIFF generation and import.
+- The resolver loads the user `catalog.xml` first. Any `<nextCatalog>` entries (including the one pointing to the app catalog, and any you add) are followed in order to resolve public IDs, system IDs, and URIs.
+
+### Catalog File Format
+
+The user catalog is OASIS XML Catalog 1.1 format. Example with one delegated catalog:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+  <nextCatalog catalog="C:/path/to/fluenta/catalog/catalog.xml" />
+  <nextCatalog catalog="D:/my-project/schemas/catalog.xml" />
+</catalog>
+```
+
+- **`<nextCatalog catalog="..."/>`**: Delegates to another catalog file. The `catalog` attribute must be an absolute path (or a path that your environment resolves correctly).
+
+### Manual Editing (Advanced)
+
+You can edit the user catalog file directly to add or remove `<nextCatalog>` entries or other OASIS catalog elements. File to edit:
+
+- **Windows**: `%APPDATA%\Fluenta\catalog\catalog.xml`
+- **Linux/macOS**: `~/.config/Fluenta/catalog/catalog.xml`
+
+After editing, restart Fluenta or ensure no cached catalog state is used. The GUI **XML Options** tab only manages `<nextCatalog>` entries; other entry types (e.g. `<public>`, `<system>`, `<uri>`) must be added by editing the file or the application catalog in the installation directory.
+
+### Troubleshooting
+
+- **"Catalog not found" or resolution errors**: Ensure the user catalog file exists and that any `<nextCatalog>` paths are absolute and point to existing files. When running from CLI, run with the Fluenta project directory as working directory so the default app catalog path is valid.
+- **Missing DITA or schema resolution**: Confirm the application catalog (or your custom catalog) contains the right `<nextCatalog>` or `<system>`/`<public>`/`<uri>` entries for the DITA version and schemas you use. The bundled `catalog/catalog.xml` already includes DITA 1.2/1.3, XLIFF, DocBook, and other formats.
+
+---
+
 ## Usage Examples
 
 ### GUI Workflow: Creating a Project
@@ -1226,7 +1293,7 @@ Fluenta/
 
 ### External Resources
 
-- **XML Catalogs**: OASIS catalog format for entity resolution
+- **XML Catalogs**: OASIS catalog format for entity resolution (see [XML Catalog Setup](#xml-catalog-setup))
 - **DITA Filters**: Element-level filtering configurations
 - **SRX Files**: Sentence segmentation rules
 - **DITAVAL**: Conditional processing filters

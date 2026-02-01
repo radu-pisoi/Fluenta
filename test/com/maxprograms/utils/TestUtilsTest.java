@@ -40,11 +40,10 @@ public class TestUtilsTest {
 	@Test
 	public void testInitPreferences_returnsPreferencesWithGivenFolders() throws IOException {
 		Path base = Files.createTempDirectory("fluenta-test-init-");
-		File fluentaHome = base.resolve("home").toFile();
 		File projectsFolder = base.resolve("projects").toFile();
 		File memoriesFolder = base.resolve("memories").toFile();
 
-		Preferences prefs = TestUtils.initPreferences(fluentaHome, projectsFolder, memoriesFolder);
+		Preferences prefs = TestUtils.initPreferences(projectsFolder, memoriesFolder);
 
 		assertNotNull(prefs);
 		assertEquals(projectsFolder.getAbsolutePath(), prefs.getProjectsFolder().getAbsolutePath());
@@ -54,15 +53,13 @@ public class TestUtilsTest {
 	@Test
 	public void testInitPreferences_createsDirectoriesIfNotExist() throws IOException {
 		Path base = Files.createTempDirectory("fluenta-test-create-");
-		File fluentaHome = base.resolve("home").toFile();
 		File projectsFolder = base.resolve("projects").toFile();
 		File memoriesFolder = base.resolve("memories").toFile();
 
-		assertTrue("fluenta home should not exist before init", !fluentaHome.exists());
-		TestUtils.initPreferences(fluentaHome, projectsFolder, memoriesFolder);
+		assertTrue("projects folder should not exist before init", !projectsFolder.exists());
+		assertTrue("memories folder should not exist before init", !memoriesFolder.exists());
+		TestUtils.initPreferences(projectsFolder, memoriesFolder);
 
-		assertTrue("fluenta home should exist", fluentaHome.exists());
-		assertTrue("fluenta home should be directory", fluentaHome.isDirectory());
 		assertTrue("projects folder should exist", projectsFolder.exists());
 		assertTrue("projects folder should be directory", projectsFolder.isDirectory());
 		assertTrue("memories folder should exist", memoriesFolder.exists());
@@ -70,24 +67,11 @@ public class TestUtilsTest {
 	}
 
 	@Test
-	public void testInitPreferencesWithTempDirs_returnsPreferencesWithTempDirs() throws IOException {
-		Preferences prefs = TestUtils.initPreferencesWithTempDirs();
-
-		assertNotNull(prefs);
-		File projectsFolder = prefs.getProjectsFolder();
-		File memoriesFolder = prefs.getMemoriesFolder();
-
-		assertTrue("projects folder should exist", projectsFolder.exists());
-		assertTrue("projects folder should be directory", projectsFolder.isDirectory());
-		assertTrue("memories folder should exist", memoriesFolder.exists());
-		assertTrue("memories folder should be directory", memoriesFolder.isDirectory());
-		assertEquals("projects and memories should share same parent (fluenta home)",
-				projectsFolder.getParent(), memoriesFolder.getParent());
-	}
-
-	@Test
-	public void testInitPreferencesWithTempDirs_subsequentGetInstanceReturnsSamePaths() throws IOException {
-		Preferences prefs1 = TestUtils.initPreferencesWithTempDirs();
+	public void testInitPreferences_subsequentGetInstanceReturnsSamePaths() throws IOException {
+		Path base = Files.createTempDirectory("fluenta-test-same-");
+		File projectsFolder = base.resolve("projects").toFile();
+		File memoriesFolder = base.resolve("memories").toFile();
+		Preferences prefs1 = TestUtils.initPreferences(projectsFolder, memoriesFolder);
 		Preferences prefs2 = Preferences.getInstance();
 
 		assertEquals(prefs1.getPreferencesFolder().getAbsolutePath(),
@@ -99,18 +83,16 @@ public class TestUtilsTest {
 	@Test
 	public void testInitPreferences_resetWithDifferentDirs() throws IOException {
 		Path base1 = Files.createTempDirectory("fluenta-test-a-");
-		File home1 = base1.resolve("home").toFile();
 		File projects1 = base1.resolve("projects").toFile();
 		File memories1 = base1.resolve("memories").toFile();
-		TestUtils.initPreferences(home1, projects1, memories1);
+		TestUtils.initPreferences(projects1, memories1);
 		assertEquals(projects1.getAbsolutePath(), Preferences.getInstance().getProjectsFolder().getAbsolutePath());
 		assertEquals(memories1.getAbsolutePath(), Preferences.getInstance().getMemoriesFolder().getAbsolutePath());
 
 		Path base2 = Files.createTempDirectory("fluenta-test-b-");
-		File home2 = base2.resolve("home").toFile();
 		File projects2 = base2.resolve("projects").toFile();
 		File memories2 = base2.resolve("memories").toFile();
-		TestUtils.initPreferences(home2, projects2, memories2);
+		TestUtils.initPreferences(projects2, memories2);
 
 		assertEquals(projects2.getAbsolutePath(), Preferences.getInstance().getProjectsFolder().getAbsolutePath());
 		assertEquals(memories2.getAbsolutePath(), Preferences.getInstance().getMemoriesFolder().getAbsolutePath());
