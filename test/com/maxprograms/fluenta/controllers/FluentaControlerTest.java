@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,9 +53,10 @@ public class FluentaControlerTest {
       TestUtils.deleteRecursively(importFolder.toPath());
     }
     importFolder.mkdirs();
-    // if (xliffTranslatedFolder != null && xliffTranslatedFolder.exists()) {
-    //   TestUtils.deleteRecursively(xliffTranslatedFolder.toPath());
-    // }
+    if (xliffTranslatedFolder != null && xliffTranslatedFolder.exists()) {
+      TestUtils.deleteRecursively(xliffTranslatedFolder.toPath());
+    }
+    xliffTranslatedFolder.mkdirs();
     
     ditaMap = new File(ditaFolderString, "sample.ditamap");
     TestUtils.initPreferences(projectsFolder, memoriesFolder);
@@ -103,6 +105,18 @@ public class FluentaControlerTest {
       false, 
       true, 
       false, logger);
+
+    // Assert import folder contains DITA map, DITA topics and image
+    File importedMap = new File(importFolder, "sample.ditamap");
+    Assert.assertTrue("DITA map should be present in import folder", importedMap.exists());
+
+    File importedTopic1 = new File(importFolder, "topic1.dita");
+    File importedTopic2 = new File(importFolder, "topic2.dita");
+    Assert.assertTrue("DITA topic1.dita should be present in import folder", importedTopic1.exists());
+    Assert.assertTrue("DITA topic2.dita should be present in import folder", importedTopic2.exists());
+
+    File importedImage = new File(importFolder, "images/sample.png");
+    Assert.assertTrue("Image should be present in import folder", importedImage.exists());
   }
 
 @After
