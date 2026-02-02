@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <?encoding UTF-8?>
+  <file source-language="en-US" original="sample.ditamap" product-name="sample" datatype="x-ditamap" target-language="de-DE" tool-id="OpenXLIFF" product-version="1769975849534" build-num="0">
+    <header>
+      <skl>
+        <internal-file form="base64">PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIG1hcCBQVUJM
+SUMgIi0vL09BU0lTLy9EVEQgRElUQSBNYXAvL0VOIiAibWFwLmR0ZCI+CiUlJTElJSUgPHRvcGlj
+cmVmIGhyZWY9InRvcGljMS5kaXRhIiBjbGFzcz0iLSBtYXAvdG9waWNyZWYgIi8+IDx0b3BpY3Jl
+ZiBocmVmPSJ0b3BpYzIuZGl0YSIgY2xhc3M9Ii0gbWFwL3RvcGljcmVmICIvPiA8L21hcD4=</internal-file>
+      </skl>
+      <tool tool-version="4.5.0 20250528_0900" tool-id="OpenXLIFF" tool-name="OpenXLIFF Filters"/>
+    </header>
+    <?encoding UTF-8?>
+    <body>
+      <trans-unit approved="yes" xml:space="preserve" id="1">
+      <source><ph id="0">&lt;map domains="(map mapgroup-d)                            (topic abbrev-d)                            (topic delay-d)                            a(props deliveryTarget)                            (map ditavalref-d)                            (map glossref-d)                            (topic hazard-d)                            (topic hi-d)                            (topic indexing-d)                            (topic markup-d)                            (topic pr-d)                            (topic relmgmt-d)                            (topic sw-d)                            (topic ui-d)                            (topic ut-d)                            (topic markup-d xml-d)   " ditaarch:DITAArchVersion="1.3" class="- map/map " title="</ph>Sample DITA Project<ph id="1">" xmlns:ditaarch="http://dita.oasis-open.org/architecture/2005/"&gt;</ph></source>
+   <target><ph id="0">&lt;map domains="(map mapgroup-d)                            (topic abbrev-d)                            (topic delay-d)                            a(props deliveryTarget)                            (map ditavalref-d)                            (map glossref-d)                            (topic hazard-d)                            (topic hi-d)                            (topic indexing-d)                            (topic markup-d)                            (topic pr-d)                            (topic relmgmt-d)                            (topic sw-d)                            (topic ui-d)                            (topic ut-d)                            (topic markup-d xml-d)   " ditaarch:DITAArchVersion="1.3" class="- map/map " title="</ph>Beispiel DITA-Projekt<ph id="1">" xmlns:ditaarch="http://dita.oasis-open.org/architecture/2005/"&gt;</ph></target>
+      </trans-unit>
+    </body>
+  </file>
+  <file source-language="en-US" original="topic1.dita" product-name="sample" datatype="x-ditamap" target-language="de-DE" tool-id="OpenXLIFF" product-version="1769975849534" build-num="0">
+    <header>
+      <skl>
+        <internal-file form="base64">PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHRvcGljIFBV
+QkxJQyAiLS8vT0FTSVMvL0RURCBESVRBIFRvcGljLy9FTiIgInRvcGljLmR0ZCI+Cjx0b3BpYyBk
+b21haW5zPSIodG9waWMgYWJicmV2LWQpICAgICAgICAgICAgICAgICAgICAgICAgICAgIGEocHJv
+cHMgZGVsaXZlcnlUYXJnZXQpICAgICAgICAgICAgICAgICAgICAgICAgICAgICh0b3BpYyBlcXVh
+dGlvbi1kKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAodG9waWMgaGF6YXJkLWQpICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICh0b3BpYyBoaS1kKSAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAodG9waWMgaW5kZXhpbmctZCkgICAgICAgICAgICAgICAgICAgICAgICAgICAgKHRvcGlj
+IG1hcmt1cC1kKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAodG9waWMgbWF0aG1sLWQpICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICh0b3BpYyBwci1kKSAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAodG9waWMgcmVsbWdtdC1kKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAodG9w
+aWMgc3ctZCkgICAgICAgICAgICAgICAgICAgICAgICAgICAgKHRvcGljIHN2Zy1kKSAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAodG9waWMgdWktZCkgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgKHRvcGljIHV0LWQpICAgICAgICAgICAgICAgICAgICAgICAgICAgICh0b3BpYyBtYXJrdXAt
+ZCB4bWwtZCkgICAiIGRpdGFhcmNoOkRJVEFBcmNoVmVyc2lvbj0iMS4zIiBjbGFzcz0iLSB0b3Bp
+Yy90b3BpYyAiIHhtbG5zOmRpdGFhcmNoPSJodHRwOi8vZGl0YS5vYXNpcy1vcGVuLm9yZy9hcmNo
+aXRlY3R1cmUvMjAwNS8iIGlkPSJ0b3BpYzEiPiA8dGl0bGUgY2xhc3M9Ii0gdG9waWMvdGl0bGUg
+Ij4lJSUxJSUlPC90aXRsZT4gPGJvZHkgY2xhc3M9Ii0gdG9waWMvYm9keSAiPiA8cCBjbGFzcz0i
+LSB0b3BpYy9wICI+JSUlMiUlJTwvcD4gPGltYWdlIGhyZWY9ImltYWdlcy9zYW1wbGUucG5nIiBw
+bGFjZW1lbnQ9ImlubGluZSIgY2xhc3M9Ii0gdG9waWMvaW1hZ2UgIj4gPGFsdCBjbGFzcz0iLSB0
+b3BpYy9hbHQgIj4lJSUzJSUlPC9hbHQ+IDwvaW1hZ2U+IDwvYm9keT4gPC90b3BpYz4=</internal-file>
+      </skl>
+      <tool tool-version="4.5.0 20250528_0900" tool-id="OpenXLIFF" tool-name="OpenXLIFF Filters"/>
+    </header>
+    <?encoding UTF-8?>
+    <body>
+      <trans-unit approved="yes" xml:space="preserve" id="1">
+      <source>First Topic</source>
+   <target>Erstes Thema</target>
+      </trans-unit>
+      <trans-unit approved="yes" xml:space="preserve" id="2">
+      <source>This is a short DITA topic that references an image.</source>
+   <target>Dies ist ein kurzes DITA-Thema, das auf ein Bild verweist.</target>
+      </trans-unit>
+      <trans-unit approved="yes" xml:space="preserve" id="3">
+      <source>Sample image</source>
+   <target>Beispielbild</target>
+      </trans-unit>
+    </body>
+    <?images eyJpbWFnZVBhdGgiOiJEOlxcd29ya3NwYWNlLWZsdWVudGFcXEZsdWVudGFcXHRlc3QtZmlsZXNc
+XGRpdGEtc2FtcGxlLXByb2plY3RcXGRpdGFcXGltYWdlc1xcc2FtcGxlLnBuZyIsImhyZWYiOiJp
+bWFnZXMvc2FtcGxlLnBuZyJ9?>
+  </file>
+  <file source-language="en-US" original="topic2.dita" product-name="sample" datatype="x-ditamap" target-language="de-DE" tool-id="OpenXLIFF" product-version="1769975849534" build-num="0">
+    <header>
+      <skl>
+        <internal-file form="base64">PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHRvcGljIFBV
+QkxJQyAiLS8vT0FTSVMvL0RURCBESVRBIFRvcGljLy9FTiIgInRvcGljLmR0ZCI+Cjx0b3BpYyBk
+b21haW5zPSIodG9waWMgYWJicmV2LWQpICAgICAgICAgICAgICAgICAgICAgICAgICAgIGEocHJv
+cHMgZGVsaXZlcnlUYXJnZXQpICAgICAgICAgICAgICAgICAgICAgICAgICAgICh0b3BpYyBlcXVh
+dGlvbi1kKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAodG9waWMgaGF6YXJkLWQpICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICh0b3BpYyBoaS1kKSAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAodG9waWMgaW5kZXhpbmctZCkgICAgICAgICAgICAgICAgICAgICAgICAgICAgKHRvcGlj
+IG1hcmt1cC1kKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAodG9waWMgbWF0aG1sLWQpICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICh0b3BpYyBwci1kKSAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAodG9waWMgcmVsbWdtdC1kKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAodG9w
+aWMgc3ctZCkgICAgICAgICAgICAgICAgICAgICAgICAgICAgKHRvcGljIHN2Zy1kKSAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAodG9waWMgdWktZCkgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgKHRvcGljIHV0LWQpICAgICAgICAgICAgICAgICAgICAgICAgICAgICh0b3BpYyBtYXJrdXAt
+ZCB4bWwtZCkgICAiIGRpdGFhcmNoOkRJVEFBcmNoVmVyc2lvbj0iMS4zIiBjbGFzcz0iLSB0b3Bp
+Yy90b3BpYyAiIHhtbG5zOmRpdGFhcmNoPSJodHRwOi8vZGl0YS5vYXNpcy1vcGVuLm9yZy9hcmNo
+aXRlY3R1cmUvMjAwNS8iIGlkPSJ0b3BpYzIiPiA8dGl0bGUgY2xhc3M9Ii0gdG9waWMvdGl0bGUg
+Ij4lJSUxJSUlPC90aXRsZT4gPGJvZHkgY2xhc3M9Ii0gdG9waWMvYm9keSAiPiA8cCBjbGFzcz0i
+LSB0b3BpYy9wICI+JSUlMiUlJTwvcD4gPC9ib2R5PiA8L3RvcGljPg==</internal-file>
+      </skl>
+      <tool tool-version="4.5.0 20250528_0900" tool-id="OpenXLIFF" tool-name="OpenXLIFF Filters"/>
+    </header>
+    <?encoding UTF-8?>
+    <body>
+      <trans-unit approved="yes" xml:space="preserve" id="1">
+      <source>Second Topic</source>
+   <target>Zweites Thema</target>
+      </trans-unit>
+      <trans-unit approved="yes" xml:space="preserve" id="2">
+      <source>This is another small DITA topic with simple text content.</source>
+   <target>Dies ist ein weiteres kleines DITA-Thema mit einfachem Textinhalt.</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

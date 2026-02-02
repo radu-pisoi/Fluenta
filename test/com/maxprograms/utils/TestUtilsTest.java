@@ -14,12 +14,15 @@ package com.maxprograms.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 import org.junit.After;
 import org.junit.Before;
@@ -114,7 +117,7 @@ public class TestUtilsTest {
 		}
 		assertTrue("Sample DITA map must exist for test", ditaMap.exists());
 
-		Project project = TestUtils.getOrCreateProjectForDitaMap(ditaMap, new LocalController());
+		Project project = TestUtils.getOrCreateProjectForDitaMap(1, ditaMap, new LocalController(), Arrays.asList("de-DE"));
 
 		assertNotNull(project);
 		assertTrue("Project id should be positive", project.getId() > 0);
@@ -137,13 +140,27 @@ public class TestUtilsTest {
 		assertTrue("Sample DITA map must exist for test", ditaMap.exists());
 
     LocalController controller = new LocalController();
-		Project project1 = TestUtils.getOrCreateProjectForDitaMap(ditaMap, controller);
-		Project project2 = TestUtils.getOrCreateProjectForDitaMap(ditaMap, controller);
+		Project project1 = TestUtils.getOrCreateProjectForDitaMap(1, ditaMap, controller, Arrays.asList("de-DE"));
+		Project project2 = TestUtils.getOrCreateProjectForDitaMap(2, ditaMap, controller, Arrays.asList("de-DE"));
 
 		assertNotNull(project1);
 		assertNotNull(project2);
 		assertEquals(project1.getId(), project2.getId());
 		assertEquals(project1.getMap(), project2.getMap());
+	}
+
+	@Test
+	public void testDeleteRecursively_removesDirectoryTree() throws Exception {
+		Path base = Files.createTempDirectory("fluenta-test-delete-");
+		Path nestedDir = base.resolve("nested");
+		Path nestedFile = nestedDir.resolve("file.txt");
+		Files.createDirectories(nestedDir);
+		Files.write(nestedFile, "test".getBytes(StandardCharsets.UTF_8));
+
+		assertTrue("nested file should exist before delete", Files.exists(nestedFile));
+		TestUtils.deleteRecursively(base);
+
+		assertFalse("base folder should be deleted", Files.exists(base));
 	}
 
 }

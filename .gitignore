@@ -17,3 +17,5 @@ docs/es/out
 out-test/TEST-com.maxprograms.utils.TextUtilsTest.xml
 target*
 testclasses/*
+test-files/dita-sample-project/fluenta-home/*
+test-files/dita-sample-project/xliff/*

@@ -16,6 +16,10 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Hashtable;
@@ -79,7 +83,7 @@ public final class TestUtils {
 	 * @throws ParseException     if project date parsing fails
 	 * @throws ReflectiveOperationException if reflection on LocalController fails
 	 */
-	public static Project getOrCreateProjectForDitaMap(File ditaMapFile, LocalController controller)
+	public static Project getOrCreateProjectForDitaMap(long id, File ditaMapFile, LocalController controller, List<String> targetLanguages)
 			throws IOException, JSONException, ParseException, ReflectiveOperationException {
 		if (ditaMapFile == null || !ditaMapFile.exists()) {
 			throw new IOException("DITA Map file does not exist: " + (ditaMapFile == null ? "null" : ditaMapFile.getAbsolutePath()));
@@ -93,7 +97,7 @@ public final class TestUtils {
 				return controller.getProject(p.getId());
 			}
 		}
-		Project newProject = createNewProjectForMap(ditaMapFile, mapPath);
+		Project newProject = createNewProjectForMap(id, ditaMapFile, mapPath, targetLanguages);
     projectsManager.add(newProject);
     
 		return controller.getProject(newProject.getId());
@@ -130,20 +134,46 @@ public final class TestUtils {
 		}
 	}
 
-	private static Project createNewProjectForMap(File ditaMapFile, String mapPath) {
-		long id = System.currentTimeMillis();
+	private static Project createNewProjectForMap(long id, File ditaMapFile, String mapPath, List<String> targetLanguages) {
 		String title = ditaMapFile.getName();
 		if (title.endsWith(".ditamap")) {
 			title = title.substring(0, title.length() - ".ditamap".length());
 		}
 		String description = "Test project for " + mapPath;
 		Date now = new Date();
-		List<String> tgtLanguages = new Vector<>();
 		List<Long> memories = new Vector<>();
 		List<ProjectEvent> history = new Vector<>();
 		Hashtable<String, String> languageStatus = new Hashtable<>();
 		return new Project(id, title, description, mapPath, now, now, DEFAULT_SRC_LANGUAGE,
-				tgtLanguages, memories, history, languageStatus);
+				targetLanguages, memories, history, languageStatus);
+	}
+
+	/**
+	 * Recursively deletes a file or directory and all its contents.
+	 *
+	 * @param path the file or directory to delete
+	 * @throws IOException if a delete operation fails
+	 */
+	public static void deleteRecursively(Path path) throws IOException {
+		if (path == null || !Files.exists(path)) {
+			return;
+		}
+		Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+			@Override
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+				Files.deleteIfExists(file);
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				if (exc != null) {
+					throw exc;
+				}
+				Files.deleteIfExists(dir);
+				return FileVisitResult.CONTINUE;
+			}
+		});
 	}
 
 }
