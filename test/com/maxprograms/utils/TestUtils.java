@@ -176,4 +176,75 @@ public final class TestUtils {
 		});
 	}
 
+	/**
+	 * Generates a translated XLIFF file by creating target elements for all translation units
+	 * that are missing targets. The target content is created by prefixing the source content
+	 * with the target language code.
+	 *
+	 * @param inputXliff  path to the XLIFF file to translate
+	 * @param outputXliff path where the translated XLIFF will be written
+	 * @throws Exception if reading, parsing, or writing fails
+	 */
+	public static void generateTranslatedXliff(Path inputXliff, Path outputXliff) throws Exception {
+		javax.xml.parsers.DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
+		org.w3c.dom.Document doc = builder.parse(inputXliff.toFile());
+
+		org.w3c.dom.NodeList fileNodes = doc.getElementsByTagName("file");
+		for (int i = 0; i < fileNodes.getLength(); i++) {
+			org.w3c.dom.Element file = (org.w3c.dom.Element) fileNodes.item(i);
+			String targetLanguage = file.getAttribute("target-language");
+
+			org.w3c.dom.NodeList bodyNodes = file.getElementsByTagName("body");
+			if (bodyNodes.getLength() > 0) {
+				org.w3c.dom.Element body = (org.w3c.dom.Element) bodyNodes.item(0);
+				org.w3c.dom.NodeList transUnits = body.getElementsByTagName("trans-unit");
+
+				for (int j = 0; j < transUnits.getLength(); j++) {
+					org.w3c.dom.Element transUnit = (org.w3c.dom.Element) transUnits.item(j);
+					org.w3c.dom.NodeList targetNodes = transUnit.getElementsByTagName("target");
+
+					if (targetNodes.getLength() == 0) {
+						org.w3c.dom.NodeList sourceNodes = transUnit.getElementsByTagName("source");
+						if (sourceNodes.getLength() > 0) {
+							org.w3c.dom.Element source = (org.w3c.dom.Element) sourceNodes.item(0);
+							org.w3c.dom.Element target = doc.createElement("target");
+
+							org.w3c.dom.NodeList sourceChildren = source.getChildNodes();
+							boolean prefixAdded = false;
+
+							for (int k = 0; k < sourceChildren.getLength(); k++) {
+								org.w3c.dom.Node node = sourceChildren.item(k);
+								org.w3c.dom.Node clonedNode = node.cloneNode(true);
+
+								if (!prefixAdded && node.getNodeType() == org.w3c.dom.Node.TEXT_NODE && !targetLanguage.isEmpty()) {
+									String text = node.getTextContent();
+									clonedNode.setTextContent(targetLanguage + ":" + text);
+									prefixAdded = true;
+								}
+
+								target.appendChild(clonedNode);
+							}
+
+							transUnit.appendChild(doc.createTextNode("\n   "));
+							transUnit.appendChild(target);
+							transUnit.appendChild(doc.createTextNode("\n"));
+						}
+					}
+				}
+			}
+		}
+
+		javax.xml.transform.TransformerFactory transformerFactory = javax.xml.transform.TransformerFactory.newInstance();
+		javax.xml.transform.Transformer transformer = transformerFactory.newTransformer();
+		transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "no");
+		transformer.setOutputProperty(javax.xml.transform.OutputKeys.ENCODING, "UTF-8");
+		transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "no");
+
+		javax.xml.transform.dom.DOMSource source = new javax.xml.transform.dom.DOMSource(doc);
+		javax.xml.transform.stream.StreamResult result = new javax.xml.transform.stream.StreamResult(outputXliff.toFile());
+		transformer.transform(source, result);
+	}
+
 }

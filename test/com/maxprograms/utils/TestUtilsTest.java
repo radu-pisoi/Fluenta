@@ -163,4 +163,57 @@ public class TestUtilsTest {
 		assertFalse("base folder should be deleted", Files.exists(base));
 	}
 
+	@Test
+	public void testGenerateTranslatedXliff_createsTargetElements() throws Exception {
+		File inputXliff = new File("test-files/dita-sample-project/xliff/sample_de-DE.ditamap.xlf");
+		if (!inputXliff.exists()) {
+			inputXliff = new File("dita-sample-project/xliff/sample_de-DE.ditamap.xlf");
+		}
+		assertTrue("Input XLIFF must exist for test", inputXliff.exists());
+
+		Path outputPath = Files.createTempFile("fluenta-test-translated-", ".xlf");
+		try {
+			TestUtils.generateTranslatedXliff(inputXliff.toPath(), outputPath);
+
+			assertTrue("Output XLIFF should be created", Files.exists(outputPath));
+
+			javax.xml.parsers.DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+			factory.setNamespaceAware(true);
+			javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
+			org.w3c.dom.Document doc = builder.parse(outputPath.toFile());
+
+			org.w3c.dom.NodeList fileNodes = doc.getElementsByTagName("file");
+			assertTrue("XLIFF should have at least one file element", fileNodes.getLength() > 0);
+
+			for (int i = 0; i < fileNodes.getLength(); i++) {
+				org.w3c.dom.Element file = (org.w3c.dom.Element) fileNodes.item(i);
+				String targetLanguage = file.getAttribute("target-language");
+
+				org.w3c.dom.NodeList bodyNodes = file.getElementsByTagName("body");
+				assertTrue("File should have a body element", bodyNodes.getLength() > 0);
+
+				org.w3c.dom.Element body = (org.w3c.dom.Element) bodyNodes.item(0);
+				org.w3c.dom.NodeList transUnits = body.getElementsByTagName("trans-unit");
+
+				for (int j = 0; j < transUnits.getLength(); j++) {
+					org.w3c.dom.Element transUnit = (org.w3c.dom.Element) transUnits.item(j);
+					org.w3c.dom.NodeList targetNodes = transUnit.getElementsByTagName("target");
+					assertTrue("All trans-units should have a target element", targetNodes.getLength() > 0);
+
+					org.w3c.dom.Element target = (org.w3c.dom.Element) targetNodes.item(0);
+					org.w3c.dom.NodeList sourceNodes = transUnit.getElementsByTagName("source");
+					assertTrue("Trans-unit should have a source element", sourceNodes.getLength() > 0);
+
+					String targetText = target.getTextContent();
+					if (!targetLanguage.isEmpty()) {
+						assertTrue("Target text should start with language code prefix",
+								targetText.startsWith(targetLanguage + ":") || targetText.contains(targetLanguage + ":"));
+					}
+				}
+			}
+		} finally {
+			Files.deleteIfExists(outputPath);
+		}
+	}
+
 }

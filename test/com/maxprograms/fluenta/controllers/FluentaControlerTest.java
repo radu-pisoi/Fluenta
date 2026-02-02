@@ -1,6 +1,7 @@
 package com.maxprograms.fluenta.controllers;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.Arrays;
 
 import org.junit.After;
@@ -64,6 +65,7 @@ public class FluentaControlerTest {
 
   @Test
   public void testImportXLIFF() throws Exception {
+    // Generate first XLIFF to translate in German
     controller.generateXliff(
       project, 
       xliffFolder.getAbsolutePath(), 
@@ -81,14 +83,22 @@ public class FluentaControlerTest {
       new SimpleLogger(false));
 
     
+    // Translate in German
+    Path translatedXliff = new File(xliffTranslatedFolder, "translated_sample_de-DE_ditamap.xlf").toPath();
+    TestUtils.generateTranslatedXliff(
+      new File(xliffFolder, "sample_de-DE.ditamap.xlf").toPath(), 
+      translatedXliff);
+
+    
      SimpleLogger logger = new SimpleLogger(true);
     importFolder.mkdirs();
 
     logger.log("Importing XLIFF file...");
     
+    // Import translated XLIFF to generate documentation
     controller.importXliff(
       project, 
-      new File(xliffTranslatedFolder, "translated_sample_de-DE_ditamap.xlf").getAbsolutePath(), 
+      translatedXliff.toString(), 
       importFolder.getAbsolutePath(), 
       false, 
       true, 

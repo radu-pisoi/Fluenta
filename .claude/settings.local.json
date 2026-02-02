@@ -5,7 +5,13 @@
       "Bash(powershell -Command \"\n# Download JUnit4\n$junit_url = ''https://search.maven.org/remotecontent?filepath=junit/junit/4.13.2/junit-4.13.2.jar''\n$hamcrest_url = ''https://search.maven.org/remotecontent?filepath=org/hamcrest/hamcrest/2.2/hamcrest-2.2.jar''\n\n# Use Windows native download \\(curl is available in newer Windows\\)\ncurl -o junit-4.13.2.jar $junit_url\ncurl -o hamcrest-2.2.jar $hamcrest_url\n\n# Verify downloads\nls -la junit-4.13.2.jar hamcrest-2.2.jar\n\")",
       "Bash(curl:*)",
       "Bash(ant compile-tests:*)",
-      "Bash(ant run-tests:*)"
+      "Bash(ant run-tests:*)",
+      "Bash(java -version:*)",
+      "Bash(where:*)",
+      "Bash(set:*)",
+      "Bash(set \"PATH=%JAVA_HOME%\\\\bin;%PATH%\")",
+      "Bash(\"D:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.7.6-hotspot\\\\bin\\\\javac\" -version)",
+      "Bash(\"D:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.7.6-hotspot\\\\bin\\\\javac\" -cp \"jars\\\\junit-4.13.2.jar;jars\\\\hamcrest-2.2.jar;out\" -d testclasses testcommaxprogramsutilsTestUtils.java)"
     ]
   }
 }
