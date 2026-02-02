@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,6 +64,19 @@ public class FluentaControlerTest {
     project = TestUtils.getOrCreateProjectForDitaMap(projectId, ditaMap, controller, Arrays.asList("de-DE"));
 	}
 
+  /**
+   * Test plan for testImportXLIFF:
+   * <ol>
+   *   <li>Setup: Create project from DITA map (sample.ditamap) with target language de-DE.</li>
+   *   <li>Export: Generate XLIFF from project via generateXliff() into xliff folder.</li>
+   *   <li>Translate: Simulate translation via TestUtils.generateTranslatedXliff() from source XLIFF
+   *       to translated XLIFF (translated_sample_de-DE_ditamap.xlf).</li>
+   *   <li>Import: Call importXliff() to convert translated XLIFF back to DITA in import folder.</li>
+   *   <li>Verify: Assert import folder contains sample.ditamap, topic1.dita, topic2.dita,
+   *       and images/sample.png.</li>
+   * </ol>
+   * Covers end-to-end flow: DITA → XLIFF export → translation → XLIFF import → DITA output.
+   */
   @Test
   public void testImportXLIFF() throws Exception {
     // Generate first XLIFF to translate in German
@@ -102,7 +114,7 @@ public class FluentaControlerTest {
       project, 
       translatedXliff.toString(), 
       importFolder.getAbsolutePath(), 
-      false, 
+      true,
       true, 
       false, logger);
 
@@ -118,12 +130,5 @@ public class FluentaControlerTest {
     File importedImage = new File(importFolder, "images/sample.png");
     Assert.assertTrue("Image should be present in import folder", importedImage.exists());
   }
-
-@After
-public void tearDown() throws Exception {
-  
-
-}
-
 
 }

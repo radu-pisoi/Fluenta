@@ -15,8 +15,8 @@ package com.maxprograms.utils;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
 import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -29,9 +29,12 @@ import java.util.Vector;
 import org.json.JSONException;
 
 import com.maxprograms.fluenta.controllers.LocalController;
+import com.maxprograms.fluenta.controllers.MemoriesManager;
 import com.maxprograms.fluenta.controllers.ProjectsManager;
+import com.maxprograms.fluenta.models.Memory;
 import com.maxprograms.fluenta.models.Project;
 import com.maxprograms.fluenta.models.ProjectEvent;
+import com.maxprograms.languages.LanguageUtils;
 
 /**
  * Utility methods for use in JUnit test cases. Provides temporary file/directory
@@ -84,12 +87,13 @@ public final class TestUtils {
 	 * @throws ReflectiveOperationException if reflection on LocalController fails
 	 */
 	public static Project getOrCreateProjectForDitaMap(long id, File ditaMapFile, LocalController controller, List<String> targetLanguages)
-			throws IOException, JSONException, ParseException, ReflectiveOperationException {
+			throws Exception {
 		if (ditaMapFile == null || !ditaMapFile.exists()) {
 			throw new IOException("DITA Map file does not exist: " + (ditaMapFile == null ? "null" : ditaMapFile.getAbsolutePath()));
 		}
 		String mapPath = ditaMapFile.getAbsolutePath();
 		ProjectsManager projectsManager = getProjectsManager(controller);
+		
 		List<Project> projects = invokeGetProjects(projectsManager);
 		String normalizedMapPath = normalizePath(mapPath);
 		for (Project p : projects) {
@@ -97,8 +101,16 @@ public final class TestUtils {
 				return controller.getProject(p.getId());
 			}
 		}
-		Project newProject = createNewProjectForMap(id, ditaMapFile, mapPath, targetLanguages);
+    Date now = new Date();
+		Project newProject = createNewProjectForMap(id, ditaMapFile, mapPath, targetLanguages, now);
     projectsManager.add(newProject);
+
+    MemoriesManager memoriesManager = getMemoriesManager(controller);
+    memoriesManager.add(
+      new Memory(id, "Test Memory", 
+      "Test Memory Description", 
+      now, now, 
+      LanguageUtils.getLanguage("en-US")));
     
 		return controller.getProject(newProject.getId());
 	}
@@ -115,6 +127,19 @@ public final class TestUtils {
 		}
 		return manager;
 	}
+
+    private static MemoriesManager getMemoriesManager(LocalController controller)
+        throws ReflectiveOperationException, IOException, JSONException, ParseException {
+      java.lang.reflect.Field field = LocalController.class.getDeclaredField("memoriesManager");
+      field.setAccessible(true);
+      MemoriesManager manager = (MemoriesManager) field.get(controller);
+      if (manager == null) {
+        Preferences prefs = Preferences.getInstance();
+        manager = new MemoriesManager(prefs.getMemoriesFolder());
+        field.set(controller, manager);
+      }
+      return manager;
+    }
 
 	@SuppressWarnings("unchecked")
 	private static List<Project> invokeGetProjects(ProjectsManager projectsManager) throws ReflectiveOperationException {
@@ -134,17 +159,18 @@ public final class TestUtils {
 		}
 	}
 
-	private static Project createNewProjectForMap(long id, File ditaMapFile, String mapPath, List<String> targetLanguages) {
+	private static Project createNewProjectForMap(
+    long id, File ditaMapFile, String mapPath, List<String> targetLanguages, 
+        Date date) {
 		String title = ditaMapFile.getName();
 		if (title.endsWith(".ditamap")) {
 			title = title.substring(0, title.length() - ".ditamap".length());
 		}
 		String description = "Test project for " + mapPath;
-		Date now = new Date();
 		List<Long> memories = new Vector<>();
 		List<ProjectEvent> history = new Vector<>();
 		Hashtable<String, String> languageStatus = new Hashtable<>();
-		return new Project(id, title, description, mapPath, now, now, DEFAULT_SRC_LANGUAGE,
+		return new Project(id, title, description, mapPath, date, date, DEFAULT_SRC_LANGUAGE,
 				targetLanguages, memories, history, languageStatus);
 	}
 
