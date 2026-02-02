@@ -19,3 +19,5 @@ target*
 testclasses/*
 test-files/dita-sample-project/fluenta-home/*
 test-files/dita-sample-project/xliff/*
+test-files/dita-sample-project/dita-import/*
+test-files/dita-sample-project/xliff-translated/*
