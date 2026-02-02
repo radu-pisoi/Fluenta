@@ -14,6 +14,20 @@ import com.maxprograms.languages.Language;
 import com.maxprograms.utils.SimpleLogger;
 import com.maxprograms.utils.TestUtils;
 
+/**
+ * Tests profiling at paragraph level with one DITA map and two publications that share the same topic.
+ * <p>
+ * Scenario: A single DITA map references two publications (e.g. product variants). Both publications
+ * include the same shared topic (e.g. topic2.dita). Within that shared topic, each publication has
+ * its own paragraphs that are filtered in or out via DITAVAL profiling—paragraphs for publication 1
+ * are not included in publication 2 and vice versa.
+ * </p>
+ * <p>
+ * This test verifies that XLIFF generation, translation, and re-import correctly handle
+ * paragraph-level profiling so that each publication receives only its profiled content and
+ * the merged import preserves both variants in the output.
+ * </p>
+ */
 public class ProfilingOneMapLevelParaTest {
 
   private String fluentaHomeFolderString = "test-files/profiling-one-map-para/fluenta-home";
@@ -33,6 +47,12 @@ public class ProfilingOneMapLevelParaTest {
 
   private long projectId = 1234567890;
 
+  /**
+   * Prepares the test environment: cleans fluenta-home, xliff, and import folders, creates a project
+   * from the DITA map with one target language (de-DE), and initializes the controller.
+   *
+   * @throws Exception if folder operations or project creation fails
+   */
   @Before
   public void setUp() throws Exception {
     fluentaHomeFolder = new File(fluentaHomeFolderString);
@@ -66,6 +86,18 @@ public class ProfilingOneMapLevelParaTest {
   }
 
 
+  /**
+   * Verifies XLIFF generation and import for two publications that share a topic with
+   * paragraph-level profiling.
+   * <p>
+   * For each publication (pub1, pub2), generates XLIFF using its DITAVAL, simulates translation,
+   * and imports the translated XLIFF into a common output folder. Asserts that the imported DITA
+   * map and all topics (including the shared topic with publication-specific paragraphs) are
+   * present and that the map correctly reflects which topics belong to which publication(s).
+   * </p>
+   *
+   * @throws Exception if setup, XLIFF generation, translation, or import fails
+   */
   @Test
   public void testImportXLIFF() throws Exception {
     File prod1Ditaval = new File(ditaFolderString, "publication1.ditaval");
