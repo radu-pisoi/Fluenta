@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topic PUBLIC "-//OASIS//DTD DITA Topic//EN" "topic.dtd">
+<topic id="topic1" product="pub1">
+    <title>Topic 1</title>
+    <shortdesc>This is topic 1, included in publication 1.</shortdesc>
+    <body>
+        <p>Content for topic 1.</p>
+    </body>
+</topic>
