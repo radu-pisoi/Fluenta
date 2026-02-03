@@ -13,6 +13,20 @@ import com.maxprograms.languages.Language;
 import com.maxprograms.utils.SimpleLogger;
 import com.maxprograms.utils.TestUtils;
 
+/**
+ * Tests the basic Fluenta workflow for a single DITA map with shared topics and one image.
+ * <p>
+ * Scenario: A DITA map ({@code sample.ditamap}) references the same topics (e.g. topic1.dita,
+ * topic2.dita) and one image ({@code images/sample.png}). The workflow is: create project from
+ * the map, generate XLIFF for a target language, translate the XLIFF, then import the translated
+ * XLIFF back to DITA. The image is copied to the output folder during import so that the
+ * translated documentation is complete.
+ * </p>
+ * <p>
+ * This test verifies the end-to-end flow: DITA → XLIFF export → translation → XLIFF import → DITA
+ * output, including that the image is present in the import output.
+ * </p>
+ */
 public class FluentaControlerTest {
 
   private String fluentaHomeFolderString = "test-files/dita-sample-project/fluenta-home";
@@ -65,17 +79,22 @@ public class FluentaControlerTest {
 	}
 
   /**
-   * Test plan for testImportXLIFF:
+   * Basic workflow: DITA map with same topics and one image; image is copied to the output.
+   * <p>
+   * Test plan:
+   * </p>
    * <ol>
-   *   <li>Setup: Create project from DITA map (sample.ditamap) with target language de-DE.</li>
-   *   <li>Export: Generate XLIFF from project via generateXliff() into xliff folder.</li>
-   *   <li>Translate: Simulate translation via TestUtils.generateTranslatedXliff() from source XLIFF
-   *       to translated XLIFF (translated_sample_de-DE_ditamap.xlf).</li>
-   *   <li>Import: Call importXliff() to convert translated XLIFF back to DITA in import folder.</li>
-   *   <li>Verify: Assert import folder contains sample.ditamap, topic1.dita, topic2.dita,
-   *       and images/sample.png.</li>
+   *   <li><b>Setup:</b> Create project from DITA map (sample.ditamap) with target language de-DE.</li>
+   *   <li><b>Export:</b> Generate XLIFF from project via generateXliff() into xliff folder.</li>
+   *   <li><b>Translate:</b> Simulate translation via TestUtils.generateTranslatedXliff() from source
+   *       XLIFF to translated XLIFF (translated_sample_de-DE_ditamap.xlf).</li>
+   *   <li><b>Import:</b> Call importXliff() to convert translated XLIFF back to DITA in import folder;
+   *       non-translatable resources (e.g. the image) are copied to the output.</li>
+   *   <li><b>Verify:</b> Assert import folder contains sample.ditamap, topic1.dita, topic2.dita,
+   *       and images/sample.png (image copied to output).</li>
    * </ol>
-   * Covers end-to-end flow: DITA → XLIFF export → translation → XLIFF import → DITA output.
+   *
+   * @throws Exception if setup, XLIFF generation, translation, or import fails
    */
   @Test
   public void testImportXLIFF() throws Exception {
