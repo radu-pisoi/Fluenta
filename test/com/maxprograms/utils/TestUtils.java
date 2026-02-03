@@ -401,4 +401,81 @@ public final class TestUtils {
 		transformer.transform(source, result);
 	}
 
+	/**
+	 * Inserts text into the last paragraph of a DITA topic file. The text is appended
+	 * to the end of the last {@code <p>} element found in the topic body.
+	 *
+	 * <p>Supports different DITA topic types (topic, concept, task) by searching for
+	 * body elements: {@code <body>}, {@code <conbody>}, {@code <taskbody>}.</p>
+	 *
+	 * @param topicPath absolute path to the DITA topic file (.dita)
+	 * @param textToInsert text to append to the last paragraph
+	 * @throws IOException if the topic file cannot be read or written
+	 * @throws IllegalArgumentException if text to insert is null or empty
+	 * @throws Exception if XML parsing fails, no body element is found, or no paragraphs exist
+	 */
+	public static void insertTextInLastParagraph(Path topicPath, String textToInsert) throws Exception {
+		if (!Files.exists(topicPath) || !Files.isRegularFile(topicPath)) {
+			throw new IOException("Topic file does not exist: " + topicPath);
+		}
+		if (textToInsert == null || textToInsert.isEmpty()) {
+			throw new IllegalArgumentException("Text to insert cannot be null or empty");
+		}
+
+		javax.xml.parsers.DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+		factory.setFeature("http://xml.org/sax/features/validation", false);
+		javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
+		org.w3c.dom.Document doc = builder.parse(topicPath.toFile());
+
+		org.w3c.dom.Element bodyElement = findBodyElement(doc);
+		if (bodyElement == null) {
+			throw new Exception("No body element found in topic: " + topicPath);
+		}
+
+		org.w3c.dom.NodeList paragraphs = bodyElement.getElementsByTagName("p");
+		if (paragraphs.getLength() == 0) {
+			throw new Exception("No <p> elements found in topic: " + topicPath);
+		}
+
+		org.w3c.dom.Element lastParagraph = (org.w3c.dom.Element) paragraphs.item(paragraphs.getLength() - 1);
+		org.w3c.dom.Text textNode = doc.createTextNode(textToInsert);
+		lastParagraph.appendChild(textNode);
+
+		javax.xml.transform.TransformerFactory transformerFactory = javax.xml.transform.TransformerFactory.newInstance();
+		javax.xml.transform.Transformer transformer = transformerFactory.newTransformer();
+		transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "no");
+		transformer.setOutputProperty(javax.xml.transform.OutputKeys.ENCODING, "UTF-8");
+		transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "no");
+
+		org.w3c.dom.DocumentType doctype = doc.getDoctype();
+		if (doctype != null) {
+			transformer.setOutputProperty(javax.xml.transform.OutputKeys.DOCTYPE_PUBLIC, doctype.getPublicId());
+			transformer.setOutputProperty(javax.xml.transform.OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
+		}
+
+		javax.xml.transform.dom.DOMSource source = new javax.xml.transform.dom.DOMSource(doc);
+		javax.xml.transform.stream.StreamResult result = new javax.xml.transform.stream.StreamResult(topicPath.toFile());
+		transformer.transform(source, result);
+	}
+
+	/**
+	 * Helper method that finds the body element in a DITA topic document.
+	 * Searches for body elements in the order: body, conbody, taskbody.
+	 *
+	 * @param doc the parsed DITA topic document
+	 * @return the first body element found, or null if none found
+	 */
+	private static org.w3c.dom.Element findBodyElement(org.w3c.dom.Document doc) {
+		String[] bodyTypes = { "body", "conbody", "taskbody" };
+		for (String bodyType : bodyTypes) {
+			org.w3c.dom.NodeList nodes = doc.getElementsByTagName(bodyType);
+			if (nodes.getLength() > 0) {
+				return (org.w3c.dom.Element) nodes.item(0);
+			}
+		}
+		return null;
+	}
+
 }

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xliff version="1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <?encoding UTF-8?>
+  <file source-language="en" original="test_profile.ditamap" product-name="test" datatype="x-ditamap" target-language="de" tool-id="OpenXLIFF" product-version="1770027440845" build-num="0">
+    <header>
+      <skl>
+        <external-file href="D:\workspace\translation-sample\Fluenta\projects\1770027440845\dita11689930317911767873.skl"/>
+      </skl>
+      <tool tool-version="4.3.1 20250315_1747" tool-id="OpenXLIFF" tool-name="OpenXLIFF Filters"/>
+    </header>
+    <?encoding UTF-8?>
+    <body>
+      <trans-unit approved="no" xml:space="preserve" id="1">
+      <source>Test profile</source>
+   </trans-unit>
+    </body>
+  </file>
+  <file original="topic1.dita" source-language="en" product-name="test" target-language="de" datatype="x-ditamap" tool-id="OpenXLIFF" product-version="1770027440845" build-num="0">
+    <header>
+      <skl>
+        <external-file href="D:\workspace\translation-sample\Fluenta\projects\1770027440845\dita5027656139940185905.skl"/>
+      </skl>
+      <tool tool-version="4.3.1 20250315_1747" tool-id="OpenXLIFF" tool-name="OpenXLIFF Filters"/>
+    </header>
+    <?encoding UTF-8?>
+    <body>
+      <trans-unit approved="no" id="1" xml:space="preserve">
+      <source>Topic 1</source>
+   </trans-unit>
+      <trans-unit approved="no" id="2" xml:space="preserve">
+      <source>This is topic 1, included in publication 1.</source>
+   </trans-unit>
+      <trans-unit approved="no" id="3" xml:space="preserve">
+      <source>Content for topic 1.</source>
+   </trans-unit>
+    </body>
+  </file>
+  <file original="topic2.dita" source-language="en" product-name="test" target-language="de" datatype="x-ditamap" tool-id="OpenXLIFF" product-version="1770027440845" build-num="0">
+    <header>
+      <skl>
+        <external-file href="D:\workspace\translation-sample\Fluenta\projects\1770027440845\dita4786617101137943580.skl"/>
+      </skl>
+      <tool tool-version="4.3.1 20250315_1747" tool-id="OpenXLIFF" tool-name="OpenXLIFF Filters"/>
+    </header>
+    <?encoding UTF-8?>
+    <body>
+      <trans-unit approved="no" id="1" xml:space="preserve">
+      <source>Topic 2</source>
+   </trans-unit>
+      <trans-unit approved="no" id="2" xml:space="preserve">
+      <source>This is topic 2, included in both publications.</source>
+   </trans-unit>
+      <trans-unit approved="no" id="3" xml:space="preserve">
+      <source>p1 Content for topic 2.</source>
+   </trans-unit>
+      <trans-unit approved="no" id="4" xml:space="preserve">
+      <source>p2 Content for topic 2.</source>
+   </trans-unit>
+      <trans-unit approved="no" id="5" xml:space="preserve">
+      <source>p3 Content for topic 2.</source>
+   </trans-unit>
+      <trans-unit approved="no" id="6" xml:space="preserve">
+      <source>p4 Content for topic 2.</source>
+   </trans-unit>
+    </body>
+  </file>
+</xliff>

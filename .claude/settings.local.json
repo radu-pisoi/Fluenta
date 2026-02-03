@@ -11,7 +11,13 @@
       "Bash(set:*)",
       "Bash(set \"PATH=%JAVA_HOME%\\\\bin;%PATH%\")",
       "Bash(\"D:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.7.6-hotspot\\\\bin\\\\javac\" -version)",
-      "Bash(\"D:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.7.6-hotspot\\\\bin\\\\javac\" -cp \"jars\\\\junit-4.13.2.jar;jars\\\\hamcrest-2.2.jar;out\" -d testclasses testcommaxprogramsutilsTestUtils.java)"
+      "Bash(\"D:\\\\Program Files\\\\Eclipse Adoptium\\\\jdk-21.0.7.6-hotspot\\\\bin\\\\javac\" -cp \"jars\\\\junit-4.13.2.jar;jars\\\\hamcrest-2.2.jar;out\" -d testclasses testcommaxprogramsutilsTestUtils.java)",
+      "Bash(find:*)",
+      "Bash(ant clean:*)",
+      "Bash(ant:*)",
+      "Bash(javac:*)",
+      "Bash(java:*)",
+      "Bash(jar -tf:*)"
     ]
   }
 }
