@@ -273,4 +273,61 @@ public final class TestUtils {
 		transformer.transform(source, result);
 	}
 
+	/**
+	 * Adds a new topic reference to a DITA Map as the last topic. The method creates
+	 * a {@code <topicref>} element with the relative path from the map directory to the
+	 * topic file and appends it to the map element.
+	 *
+	 * @param ditaMapPath absolute path to the DITA map file (.ditamap)
+	 * @param topicPath   absolute path to the topic file (.dita) to be added
+	 * @throws IOException  if the files cannot be read or written
+	 * @throws Exception    if XML parsing or transformation fails
+	 */
+	public static void addTopicRefToDitaMap(Path ditaMapPath, Path topicPath) throws Exception {
+		if (!Files.exists(ditaMapPath) || !Files.isRegularFile(ditaMapPath)) {
+			throw new IOException("DITA Map file does not exist: " + ditaMapPath);
+		}
+		if (!Files.exists(topicPath) || !Files.isRegularFile(topicPath)) {
+			throw new IOException("Topic file does not exist: " + topicPath);
+		}
+
+		javax.xml.parsers.DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+		factory.setNamespaceAware(true);
+		factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+		factory.setFeature("http://xml.org/sax/features/validation", false);
+		javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
+		org.w3c.dom.Document doc = builder.parse(ditaMapPath.toFile());
+
+		String relativePath = ditaMapPath.getParent().relativize(topicPath).toString();
+		relativePath = relativePath.replace('\\', '/');
+
+		org.w3c.dom.Element mapElement = doc.getDocumentElement();
+		if (mapElement == null || !"map".equals(mapElement.getNodeName())) {
+			throw new Exception("Invalid DITA Map: <map> element not found");
+		}
+
+		org.w3c.dom.Element topicref = doc.createElement("topicref");
+		topicref.setAttribute("href", relativePath);
+
+		mapElement.appendChild(doc.createTextNode("\n  "));
+		mapElement.appendChild(topicref);
+		mapElement.appendChild(doc.createTextNode("\n"));
+
+		javax.xml.transform.TransformerFactory transformerFactory = javax.xml.transform.TransformerFactory.newInstance();
+		javax.xml.transform.Transformer transformer = transformerFactory.newTransformer();
+		transformer.setOutputProperty(javax.xml.transform.OutputKeys.INDENT, "no");
+		transformer.setOutputProperty(javax.xml.transform.OutputKeys.ENCODING, "UTF-8");
+		transformer.setOutputProperty(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "no");
+
+		org.w3c.dom.DocumentType doctype = doc.getDoctype();
+		if (doctype != null) {
+			transformer.setOutputProperty(javax.xml.transform.OutputKeys.DOCTYPE_PUBLIC, doctype.getPublicId());
+			transformer.setOutputProperty(javax.xml.transform.OutputKeys.DOCTYPE_SYSTEM, doctype.getSystemId());
+		}
+
+		javax.xml.transform.dom.DOMSource source = new javax.xml.transform.dom.DOMSource(doc);
+		javax.xml.transform.stream.StreamResult result = new javax.xml.transform.stream.StreamResult(ditaMapPath.toFile());
+		transformer.transform(source, result);
+	}
+
 }
